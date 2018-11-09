@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon ./src/app.js --exec babel-node --presets env",
-    "lint": "eslint ./"
+    "start": "npm run build && node build/app.js",
+    "build": "babel src -d build --presets @babel/preset-env",
+    "watch": "nodemon ./src/app.js --exec babel-node --presets @babel/preset-env"
   },
   "repository": {
     "type": "git",
@@ -31,9 +32,10 @@
     "passport": "0.4.0"
   },
   "devDependencies": {
+    "@babel/cli": "^7.1.5",
+    "@babel/core": "^7.1.5",
     "@babel/node": "7.0.0",
-    "babel-cli": "6.26.0",
-    "babel-preset-env": "1.7.0",
+    "@babel/preset-env": "^7.1.5",
     "eslint": "5.8.0",
     "eslint-config-airbnb-base": "13.1.0",
     "eslint-plugin-import": "2.14.0",
