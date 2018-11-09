@@ -19,7 +19,9 @@
   "homepage": "https://github.com/AbsolutelyDefault/API#readme",
   "description": "",
   "dependencies": {
+    "@babel/cli": "7.1.5",
     "@babel/polyfill": "7.0.0",
+    "@babel/preset-env": "7.1.5",
     "body-parser": "1.18.3",
     "dotenv": "6.1.0",
     "eslint-config-standard": "12.0.0",
@@ -32,10 +34,8 @@
     "passport": "0.4.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.1.5",
-    "@babel/core": "^7.1.5",
+    "@babel/core": "7.1.5",
     "@babel/node": "7.0.0",
-    "@babel/preset-env": "^7.1.5",
     "eslint": "5.8.0",
     "eslint-config-airbnb-base": "13.1.0",
     "eslint-plugin-import": "2.14.0",
