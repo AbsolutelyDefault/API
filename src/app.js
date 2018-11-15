@@ -12,7 +12,7 @@ mongoose.connect(process.env.CONNECTION_STRING, { useNewUrlParser: true });
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', process.env.UI_ORIGIN);
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Cookie, Set-Cookie');
   res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, PUT, POST, DELETE, PATCH');
   res.setHeader('Access-Control-Allow-Credentials', true);
   next();
