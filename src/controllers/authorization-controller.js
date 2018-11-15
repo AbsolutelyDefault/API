@@ -1,4 +1,5 @@
 import { google } from 'googleapis';
+import JWT from 'jsonwebtoken';
 import { User } from '../models';
 
 
@@ -40,21 +41,18 @@ export async function authentificate(req) {
     });
     await user.save();
   }
+  tokens.authorizationToken = JWT.sign({ mongoId: user._id }, process.env.JWT_SECRET);
   return tokens;
 }
 
-export async function getUserFromAccessToken(token) {
-  const me = await getGoogleUserFromAccessToken(token);
-  const { id: googleId } = me.data;
-  return User.findOne({ googleId });
+export async function getUserFromReq(req) {
+  const { mongoId } = req.parsedToken || JWT.verify(req.headers.authorization, process.env.JWT_SECRET);
+  return User.findById(mongoId);
 }
 
 export async function authorization(req, res, next) {
   try {
-    const user = await getUserFromAccessToken(req.headers.authorization || req.cookies.vueauth_access_token);
-    if (!user) {
-      throw new Error();
-    }
+    req.parsedToken = JWT.verify(req.headers.authorization, process.env.JWT_SECRET);
     next();
   } catch (e) {
     res.status(403).send(e);

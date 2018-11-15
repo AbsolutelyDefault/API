@@ -1,12 +1,11 @@
 import express from 'express';
-import { getUserFromAccessToken } from '../controllers';
+import { getUserFromReq } from '../controllers';
 
 const router = express.Router();
 
 router.get('/status', async (req, res) => {
   try {
-    console.log(req.cookies);
-    const user = await getUserFromAccessToken(req.headers.authorization || req.cookies.vueauth_access_token);
+    const user = await getUserFromReq(req);
     if (!user) {
       throw new Error();
     }

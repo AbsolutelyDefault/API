@@ -6,7 +6,6 @@ const router = express.Router();
 router.post('/google', async (req, res) => {
   try {
     const result = await authentificate(req);
-    res.cookie('token', result.access_token, { httpOnly: true, secure: true });
     res.status(200).send(result);
   } catch (err) {
     res.status(500).send(err);
