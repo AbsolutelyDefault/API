@@ -27,11 +27,11 @@ async function getGoogleAccountFromCode(code, redirectUri) {
   const data = await auth.getToken(code);
   const { tokens } = data;
   const me = await getGoogleUserFromAccessToken(tokens.access_token);
-  return { data: me.data, tokens };
+  return me.data;
 }
 
 export async function authentificate(req) {
-  const { data: account, tokens } = await getGoogleAccountFromCode(req.body.code, req.body.redirectUri);
+  const account = await getGoogleAccountFromCode(req.body.code, req.body.redirectUri);
   let user = await User.findOne({ googleId: account.id });
   if (!user) {
     user = new User({
@@ -41,8 +41,8 @@ export async function authentificate(req) {
     });
     await user.save();
   }
-  tokens.authorizationToken = JWT.sign({ mongoId: user._id }, process.env.JWT_SECRET);
-  return tokens;
+  const authorizationToken = JWT.sign({ mongoId: user._id }, process.env.JWT_SECRET);
+  return { authorizationToken };
 }
 
 export async function getUserFromReq(req) {
