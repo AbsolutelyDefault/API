@@ -3,6 +3,8 @@
   "rules": {
     "linebreak-style": ["error", "windows"],
     "no-underscore-dangle":"warn",
-    "no-param-reassign": "off"
+    "no-param-reassign": "off",
+    "max-len": ["error", 150],
+    "import/prefer-default-export": "off"
   }
 }
