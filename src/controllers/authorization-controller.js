@@ -51,7 +51,7 @@ export async function getUserFromAccessToken(token) {
 
 export async function authorization(req, res, next) {
   try {
-    const user = await getUserFromAccessToken(req.cookies.vueauth_access_token);
+    const user = await getUserFromAccessToken(req.headers.authorization || req.cookies.vueauth_access_token);
     if (!user) {
       throw new Error();
     }
