@@ -1,10 +1,15 @@
 {
   "extends": "airbnb-base",
+  "env": {
+    "node": true,
+    "mocha": true
+  },
   "rules": {
     "linebreak-style": ["error", "windows"],
-    "no-underscore-dangle":"warn",
+    "no-underscore-dangle": "warn",
     "no-param-reassign": "off",
     "max-len": ["error", 150],
-    "import/prefer-default-export": "off"
+    "import/prefer-default-export": "off",
+    "no-unused-expressions": "off"
   }
 }
