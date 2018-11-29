@@ -22,6 +22,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/', routes);
 
-const server = app.listen(process.env.PORT, () => {
+export const server = app.listen(process.env.PORT, () => {
   console.log(`Server listening on port ${server.address().port}`);
 });
