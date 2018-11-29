@@ -12,7 +12,13 @@ router.route('/')
         tasks: [],
       });
       await column.save();
-      const board = await Board.findById(req.body.id);
+      let board = await Board.findOne({ authorId: req.parsedToken.mongoId });
+      if (!board) {
+        board = new Board({
+          authorId: req.parsedToken.mongoId,
+          columns: [],
+        });
+      }
       board.columns.push(column);
       await board.save();
       res.status(200).send(column);
@@ -22,7 +28,7 @@ router.route('/')
   })
   .get(async (req, res) => {
     try {
-      const board = await Board.find({ authorId: req.parsedToken.mongoId }).populate('tasks');
+      const board = await Board.findOne({ authorId: req.parsedToken.mongoId }).populate({ path: 'columns', populate: { path: 'tasks' } });
       res.send(board.columns);
     } catch (err) {
       res.status(500).send(err);
@@ -38,7 +44,7 @@ router.route('/')
   })
   .delete(async (req, res) => {
     try {
-      await Board.findByIdAndUpdate(req.body.boardId, {
+      await Board.findOneAndUpdate({ authorId: req.parsedToken.mongoId }, {
         $pull: { columns: req.body.id },
       });
       await Column.findByIdAndRemove(req.body.id);
