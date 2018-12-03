@@ -1,6 +1,6 @@
 import { google } from 'googleapis';
 import JWT from 'jsonwebtoken';
-import { User } from '../models';
+import { User, Board } from '../models';
 
 
 function createConnection(redirectUri) {
@@ -40,6 +40,11 @@ export async function authentificate(req) {
       nickname: account.nickname,
     });
     await user.save();
+    const board = new Board({
+      authorId: user._id,
+      columns: [],
+    });
+    await board.save();
   }
   const authorizationToken = JWT.sign({ mongoId: user._id }, process.env.JWT_SECRET);
   return { authorizationToken };
