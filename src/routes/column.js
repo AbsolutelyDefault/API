@@ -47,6 +47,12 @@ router.route('/')
       await Board.findOneAndUpdate({ authorId: req.parsedToken.mongoId }, {
         $pull: { columns: req.body.id },
       });
+      const column = await Column.findById(req.body.id);
+      if (column.tasks) {
+        column.tasks.forEach(async (i) => {
+          await Task.findByIdAndRemove(i);
+        });
+      }
       await Column.findByIdAndRemove(req.body.id);
       res.end();
     } catch (err) {
@@ -56,8 +62,10 @@ router.route('/')
   .patch(async (req, res) => {
     try {
       const column = await Column.findById(req.body.id);
-      await Board.findAndUpdate({ authorId: req.parsedToken.mongoId }, {
+      await Board.findOneAndUpdate({ authorId: req.parsedToken.mongoId }, {
         $pull: { columns: req.body.id },
+      });
+      await Board.findOneAndUpdate({ authorId: req.parsedToken.mongoId }, {
         $push: {
           columns: {
             $each: [column],
@@ -116,7 +124,7 @@ router.route('/task')
         $pull: { tasks: req.body.id },
       });
       const task = await Task.findById(req.body.id);
-      const column = await Column.findByIdAndUpdate(req.body.columnNewId, {
+      await Column.findByIdAndUpdate(req.body.columnNewId, {
         $push: {
           tasks: {
             $each: [task],
@@ -124,7 +132,6 @@ router.route('/task')
           },
         },
       });
-      await column.save();
       res.end();
     } catch (err) {
       res.status(500).send(err);
