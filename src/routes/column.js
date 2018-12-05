@@ -1,5 +1,5 @@
 import express from 'express';
-import { Column, Task, Board } from '../models/column';
+import { Column, Task, Board } from '../models';
 
 const router = express.Router();
 
