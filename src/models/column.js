@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 const { Schema } = mongoose;
 
 const taskSchema = new Schema({
+  color: { type: String, default: '#484848' },
   name: String,
   description: String,
 });
