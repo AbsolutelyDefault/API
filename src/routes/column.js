@@ -110,6 +110,7 @@ router.route('/task')
   .put(async (req, res) => {
     try {
       await Task.findByIdAndUpdate(req.body.id, {
+        color: req.body.color,
         name: req.body.name,
         description: req.body.description,
       });
