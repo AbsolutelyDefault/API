@@ -35,6 +35,7 @@ export async function authentificate(req) {
   let user = await User.findOne({ googleId: account.id });
   if (!user) {
     user = new User({
+      email: account.emails[0].value,
       googleId: account.id,
       displayName: account.displayName,
       nickname: account.nickname,

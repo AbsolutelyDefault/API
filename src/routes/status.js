@@ -11,6 +11,7 @@ router.get('/status', async (req, res) => {
     }
     res.status(200).send({
       loggedIn: true,
+      email: user.email,
       name: user.displayName,
       nickname: user.nickname,
     });

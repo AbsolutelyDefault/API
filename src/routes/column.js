@@ -118,6 +118,7 @@ router.route('/task')
   .put(async (req, res) => {
     try {
       await Task.findOneAndUpdate({ _id: req.body.id, authorId: req.parsedToken.mongoId }, {
+        color: req.body.color,
         name: req.body.name,
         description: req.body.description,
       });
