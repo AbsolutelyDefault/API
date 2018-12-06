@@ -5,6 +5,7 @@ const { Schema } = mongoose;
 const taskSchema = new Schema({
   name: String,
   description: String,
+  authorId: Schema.Types.ObjectId,
 });
 
 export const Task = mongoose.model('Task', taskSchema);
