@@ -3,15 +3,25 @@ import { Column, Task, Board } from '../models';
 
 const router = express.Router();
 
+// router.get('/board', async (req, res) => {
+//   try {
+//     const board = await Board.findOne({ authorId: req.parsedToken.mongoId });
+//     res.status(200).send(board);
+//   } catch (err) {
+//     res.status(500).send(err);
+//   }
+// });
+
 router.route('/')
   .post(async (req, res) => {
+    const session = await Board.startSession();
+    session.startTransaction();
     try {
       const column = await new Column({
         name: req.body.name,
         authorId: req.parsedToken.mongoId,
         tasks: [],
       });
-      await column.save();
       let board = await Board.findOne({ authorId: req.parsedToken.mongoId });
       if (!board) {
         board = new Board({
@@ -19,12 +29,18 @@ router.route('/')
           columns: [],
         });
       }
+      // if (board._id === req.bode.boardId) {
+      await column.save();
       board.columns.push(column);
       await board.save();
+      // }
+      await session.commitTransaction();
       res.status(200).send(column);
     } catch (err) {
+      await session.abortTransaction();
       res.status(500).send(err);
     }
+    session.endSession();
   })
   .put(async (req, res) => {
     try {
@@ -35,6 +51,8 @@ router.route('/')
     }
   })
   .delete(async (req, res) => {
+    const session = await Board.startSession();
+    session.startTransaction();
     try {
       const column = await Column.findOne({ _id: req.body.id, authorId: req.parsedToken.mongoId });
       await Board.findOneAndUpdate({ authorId: req.parsedToken.mongoId }, {
@@ -46,12 +64,17 @@ router.route('/')
         });
       }
       await Column.findOneAndRemove({ _id: req.body.id, authorId: req.parsedToken.mongoId });
+      await session.commitTransaction();
       res.end();
     } catch (err) {
+      await session.abortTransaction();
       res.status(500).send(err);
     }
+    session.endSession();
   })
   .patch(async (req, res) => {
+    const session = await Board.startSession();
+    session.startTransaction();
     try {
       const column = await Column.findOne({ _id: req.body.id, authorId: req.parsedToken.mongoId });
       await Board.findOneAndUpdate({ authorId: req.parsedToken.mongoId }, {
@@ -67,10 +90,13 @@ router.route('/')
           },
         });
       }
+      await session.commitTransaction();
       res.end();
     } catch (err) {
+      await session.abortTransaction();
       res.status(500).send(err);
     }
+    session.endSession();
   })
   .get(async (req, res) => {
     try {
@@ -81,6 +107,7 @@ router.route('/')
         board = await Board.findOne({ authorId: req.parsedToken.mongoId }).populate({ path: 'columns', populate: { path: 'tasks' } });
       }
       res.send(board.columns);
+      // res.send({ columns: board.columns, id: board._id });
     } catch (err) {
       res.status(500).send(err);
     }
@@ -89,6 +116,8 @@ router.route('/')
 
 router.route('/task')
   .post(async (req, res) => {
+    const session = await Task.startSession();
+    session.startTransaction();
     try {
       const task = new Task({
         name: req.body.name,
@@ -99,21 +128,29 @@ router.route('/task')
       const column = await Column.findOne({ _id: req.body.id, authorId: req.parsedToken.mongoId });
       column.tasks.push(task);
       await column.save();
+      await session.commitTransaction();
       res.send(task);
     } catch (err) {
+      await session.abortTransaction();
       res.status(500).send(err);
     }
+    session.endSession();
   })
   .delete(async (req, res) => {
+    const session = await Task.startSession();
+    session.startTransaction();
     try {
       await Column.findOneAndUpdate({ _id: req.body.id, authorId: req.parsedToken.mongoId }, {
         $pull: { tasks: req.body.id },
       });
       await Task.findOneAndRemove({ _id: req.body.id, authorId: req.parsedToken.mongoId });
+      await session.commitTransaction();
       res.end();
     } catch (err) {
+      await session.abortTransaction();
       res.status(500).send(err);
     }
+    session.endSession();
   })
   .put(async (req, res) => {
     try {
@@ -128,6 +165,8 @@ router.route('/task')
     }
   })
   .patch(async (req, res) => {
+    const session = await Task.startSession();
+    session.startTransaction();
     try {
       await Column.findOneAndUpdate({ _id: req.body.columnId, authorId: req.parsedToken.mongoId }, {
         $pull: { tasks: req.body.id },
@@ -141,10 +180,13 @@ router.route('/task')
           },
         },
       });
+      await session.commitTransaction();
       res.end();
     } catch (err) {
+      await session.abortTransaction();
       res.status(500).send(err);
     }
+    session.endSession();
   });
 
 export default router;
