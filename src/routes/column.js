@@ -6,7 +6,7 @@ const router = express.Router();
 router.get('/board', async (req, res) => {
   try {
     const board = await Board.findOne({ authorId: req.parsedToken.mongoId });
-    res.status(200).send(board);
+    res.status(200).send(board._id);
   } catch (err) {
     res.status(500).send(err);
   }
@@ -15,11 +15,6 @@ router.get('/board', async (req, res) => {
 router.route('/')
   .post(async (req, res) => {
     try {
-      const column = await new Column({
-        name: req.body.name,
-        authorId: req.parsedToken.mongoId,
-        tasks: [],
-      });
       let board = await Board.findOne({ authorId: req.parsedToken.mongoId });
       if (!board) {
         board = new Board({
@@ -27,12 +22,19 @@ router.route('/')
           columns: [],
         });
       }
-      if (board._id === req.bode.boardId) {
+      if (board._id === req.body.boardId) {
+        const column = await new Column({
+          name: req.body.name,
+          authorId: req.parsedToken.mongoId,
+          tasks: [],
+        });
         await column.save();
         board.columns.push(column);
         await board.save();
+        res.status(200).send(column);
+      } else {
+        res.status(200).end();
       }
-      res.status(200).send(column);
     } catch (err) {
       res.status(500).send(err);
     }
