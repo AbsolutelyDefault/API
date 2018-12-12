@@ -2,15 +2,14 @@ import mongoose from 'mongoose';
 
 const { Schema } = mongoose;
 
-const columnSchema = new Schema({
-  name: String,
+const boardSchema = new Schema({
   authorId: Schema.Types.ObjectId,
-  tasks: [
+  columns: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Task',
+      ref: 'Column',
     },
   ],
 });
 
-export const Column = mongoose.model('Column', columnSchema);
+export const Board = mongoose.model('Board', boardSchema);
