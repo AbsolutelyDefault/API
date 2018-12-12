@@ -4,9 +4,7 @@ import chai from 'chai';
 import chaiHttp from 'chai-http';
 import chaiAsPromised from 'chai-as-promised';
 import JWT from 'jsonwebtoken';
-// import { should } from 'should-http';
 import { server } from '../src/app';
-// import { userInfo } from 'os';
 import {
   User, Column, Task, Board,
 } from '../src/models';
@@ -24,6 +22,7 @@ describe('Task', () => {
     Board.remove();
     User.remove();
     Column.remove({}, () => {
+      console.log('DataBase is clean!');
       done();
     });
   });

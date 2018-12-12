@@ -4,7 +4,6 @@ import chai from 'chai';
 import chaiHttp from 'chai-http';
 import chaiAsPromised from 'chai-as-promised';
 import JWT from 'jsonwebtoken';
-// import { should } from 'should-http';
 import { server } from '../src/app';
 import { User, Board, Column } from '../src/models';
 
