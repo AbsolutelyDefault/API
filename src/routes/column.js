@@ -41,7 +41,7 @@ router.route('/')
   })
   .put(async (req, res) => {
     try {
-      const column = await Column.findOneAndUpdate({ _id: req.body.id, authorId: req.parsedToken.mongoId }, { name: req.body.name });
+      const column = await Column.findOneAndUpdate({ _id: req.body.id, authorId: req.parsedToken.mongoId }, { name: req.body.name }, { new: true });
       res.send(column);
     } catch (err) {
       res.status(500).send(err);
@@ -134,7 +134,7 @@ router.route('/task')
         name: req.body.name,
         description: req.body.description,
       });
-      res.end();
+      res.status(200).end();
     } catch (err) {
       res.status(500).send(err);
     }
