@@ -93,7 +93,7 @@ router.route('/')
       } else {
         board = await Board.findOne({ authorId: req.parsedToken.mongoId }).populate({ path: 'columns', populate: { path: 'tasks' } });
       }
-      res.send({ columns: board.columns, boardId: board._id });
+      res.send({ columns: board.columns, boardId: board._id, editable: board.authorId === req.parsedToken.mongoId });
     } catch (err) {
       res.status(500).send(err);
     }
