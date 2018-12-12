@@ -22,7 +22,7 @@ router.route('/')
           columns: [],
         });
       }
-      if (board._id === req.body.boardId) {
+      if (board._id.toString() === req.body.boardId) {
         const column = await new Column({
           name: req.body.name,
           authorId: req.parsedToken.mongoId,
@@ -33,7 +33,7 @@ router.route('/')
         await board.save();
         res.status(200).send(column);
       } else {
-        res.status(200).end();
+        throw new Error('No permission');
       }
     } catch (err) {
       res.status(500).send(err);
