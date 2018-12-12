@@ -88,12 +88,16 @@ router.route('/')
   .get(async (req, res) => {
     try {
       let board;
+      let editable = true;
       if (req.query.id) {
         board = await Board.findById(req.query.id).populate({ path: 'columns', populate: { path: 'tasks' } });
+        if (board.authorId !== req.parsedToken.mongoId) {
+          editable = false;
+        }
       } else {
         board = await Board.findOne({ authorId: req.parsedToken.mongoId }).populate({ path: 'columns', populate: { path: 'tasks' } });
       }
-      res.send({ columns: board.columns, boardId: board._id });
+      res.send({ columns: board.columns, boardId: board._id, editable });
     } catch (err) {
       res.status(500).send(err);
     }
