@@ -1,5 +1,5 @@
 import express from 'express';
-import { Column, Task, Board } from '../models';
+import { Column, Board, Task } from '../models';
 
 const router = express.Router();
 
@@ -94,66 +94,6 @@ router.route('/')
         board = await Board.findOne({ authorId: req.parsedToken.mongoId }).populate({ path: 'columns', populate: { path: 'tasks' } });
       }
       res.send({ columns: board.columns, boardId: board._id, editable: board.authorId.toString() === req.parsedToken.mongoId });
-    } catch (err) {
-      res.status(500).send(err);
-    }
-  });
-
-router.route('/task')
-  .post(async (req, res) => {
-    try {
-      const task = new Task({
-        name: req.body.name,
-        description: req.body.description,
-        authorId: req.parsedToken.mongoId,
-      });
-      await task.save();
-      const column = await Column.findOne({ _id: req.body.id, authorId: req.parsedToken.mongoId });
-      column.tasks.push(task);
-      await column.save();
-      res.send(task);
-    } catch (err) {
-      res.status(500).send(err);
-    }
-  })
-  .delete(async (req, res) => {
-    try {
-      await Column.findOneAndUpdate({ _id: req.body.id, authorId: req.parsedToken.mongoId }, {
-        $pull: { tasks: req.body.id },
-      });
-      await Task.findOneAndRemove({ _id: req.body.id, authorId: req.parsedToken.mongoId });
-      res.end();
-    } catch (err) {
-      res.status(500).send(err);
-    }
-  })
-  .put(async (req, res) => {
-    try {
-      await Task.findOneAndUpdate({ _id: req.body.id, authorId: req.parsedToken.mongoId }, {
-        color: req.body.color,
-        name: req.body.name,
-        description: req.body.description,
-      });
-      res.end();
-    } catch (err) {
-      res.status(500).send(err);
-    }
-  })
-  .patch(async (req, res) => {
-    try {
-      await Column.findOneAndUpdate({ _id: req.body.columnId, authorId: req.parsedToken.mongoId }, {
-        $pull: { tasks: req.body.id },
-      });
-      const task = await Task.findById({ _id: req.body.id, authorId: req.parsedToken.mongoId });
-      await Column.findByIdAndUpdate({ _id: req.body.columnNewId, authorId: req.parsedToken.mongoId }, {
-        $push: {
-          tasks: {
-            $each: [task],
-            $position: req.body.num,
-          },
-        },
-      });
-      res.end();
     } catch (err) {
       res.status(500).send(err);
     }
